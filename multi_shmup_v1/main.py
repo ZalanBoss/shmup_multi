@@ -61,11 +61,11 @@ class mainState:
         hits = pygame.sprite.groupcollide(BULLETS_TOP, WALL_TOP, False, False)
         if hits:
             for hit in hits:
-                hit.velocity = 2
+                hit.velocity = 1
         hits = pygame.sprite.groupcollide(BULLETS_BOTTOM, WALL_BOTTOM, False, False)
         if hits:
             for hit in hits:
-                hit.velocity = 2
+                hit.velocity = 1
         hits = pygame.sprite.groupcollide(POWERUPS, BULLETS_BOTTOM, True, True)
         if hits:
             for hit in hits:
@@ -82,6 +82,8 @@ class mainState:
                     player_bottom.hp += int(player_top.hp/10)
                     if player_bottom.hp < 20:
                         player_bottom.hp += int(player_top.hp/2)
+                elif hit.effect == 6:
+                    player_bottom.shoot_stage_up()
         hits = pygame.sprite.groupcollide(POWERUPS, BULLETS_TOP, True, True)
         if hits:
             for hit in hits:
@@ -98,8 +100,9 @@ class mainState:
                     player_top.hp += int(player_bottom.hp/10)
                     if player_top.hp < 20:
                         player_top.hp += int(player_bottom.hp/2)
-
-
+                elif hit.effect == 6:
+                    player_top.shoot_stage_up()
+                    
 mainGame = mainState()
 player_bottom = Players(
     WIDTH/2,
@@ -125,15 +128,18 @@ while RUNNING:
     if player_top.hp <= 0:
         player_top.kill()
         mainGame.who_wins = 2
+        player_bottom.invincible = True
     elif player_bottom.hp <= 0:
         player_bottom.kill()
         mainGame.who_wins = 1
+        player_top.invincible = True
     
     mainGame.SPAWNPOWERUP(400, 1)
     mainGame.SPAWNPOWERUP(600, 2)
     mainGame.SPAWNPOWERUP(700, 3)
     mainGame.SPAWNPOWERUP(200, 4)
     mainGame.SPAWNPOWERUP(1000, 5)
+    mainGame.SPAWNPOWERUP(800, 6)
     ALL_SPRITES.update()
     mainGame.screen.fill((10,100,130))
     ALL_SPRITES.draw(mainGame.screen)
@@ -142,6 +148,8 @@ while RUNNING:
     mainGame.draw_text(mainGame.screen,"Damage: ",14,100,25,True,(255,255,255))
     mainGame.draw_text(mainGame.screen,str(player_top.damage),14,140,25,True,(255,165,0))
     mainGame.draw_text(mainGame.screen,"HP: ",20,180,20,True,(0,150,0))
+    mainGame.draw_text(mainGame.screen,"shoot delay: ",14,WIDTH-100,25,True,(0,150,0))
+    mainGame.draw_text(mainGame.screen,str(player_top.shoot_delay),14,WIDTH-40,25,True,(0,255,255))
 
 
     if mainGame.who_wins == 1:
@@ -153,6 +161,8 @@ while RUNNING:
     mainGame.draw_text(mainGame.screen,"Damage: ",14,100,HEIGHT-25,True,(255,255,255))
     mainGame.draw_text(mainGame.screen,str(player_bottom.damage),14,140,HEIGHT-25,True,(255,165,0))
     mainGame.draw_text(mainGame.screen,"HP: ",20,180,HEIGHT-25,True,(0,150,0))
+    mainGame.draw_text(mainGame.screen,"shoot delay: ",14,WIDTH-100,HEIGHT-25,True,(0,150,0))
+    mainGame.draw_text(mainGame.screen,str(player_bottom.shoot_delay),14,WIDTH-40,HEIGHT-25,True,(0,255,255))
 
     
     pygame.display.flip()

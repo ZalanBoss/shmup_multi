@@ -15,5 +15,5 @@ class HpBar(pygame.sprite.Sprite):
         if self.lastHp != self.player.hp and 0 < self.player.hp:
             self.image = pygame.transform.scale(self.image, (self.player.hp * 2, 10))
             self.lastHp = self.player.hp
-        else:
-            pass
+        elif self.player.hp <= 0:
+            self.kill()

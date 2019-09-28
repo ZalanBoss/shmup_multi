@@ -7,20 +7,23 @@ class Powerup(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.effect = effect
         if self.effect == 1:
-            self.image = pygame.image.load(os.path.join(GAME_FOLDER, "./assets/dmg_pow.gif")).convert()
+            self.image = pygame.image.load(os.path.join(GAME_FOLDER, "./assets/dmg_pow.png"))
             self.image = pygame.transform.scale(self.image, (20, 20))
         elif self.effect == 2:
-            self.image = pygame.surface.Surface((20, 20))
-            self.image.fill((0,0,255))
+            self.image = pygame.image.load(os.path.join(GAME_FOLDER, "./assets/shoot_spd.png"))
+            self.image = pygame.transform.scale(self.image, (20, 20))
         elif self.effect == 3:
-            self.image = pygame.surface.Surface((20, 20))
-            self.image.fill((0,0,0))
+            self.image = pygame.image.load(os.path.join(GAME_FOLDER, "./assets/speed_pow.png"))
+            self.image = pygame.transform.scale(self.image, (20, 20))
         elif self.effect == 4:
-            self.image = pygame.surface.Surface((20, 20))
-            self.image.fill((20,255,255))
+            self.image = pygame.image.load(os.path.join(GAME_FOLDER, "./assets/wall_pow.png"))
+            self.image = pygame.transform.scale(self.image, (20, 20))
         elif self.effect == 5:
-            self.image = pygame.surface.Surface((20, 20))
-            self.image.fill((255,0,255))
+            self.image = pygame.image.load(os.path.join(GAME_FOLDER, "./assets/hp.png"))
+            self.image = pygame.transform.scale(self.image, (20, 20))
+        elif self.effect == 6:
+            self.image = pygame.image.load(os.path.join(GAME_FOLDER, "./assets/ss.png"))
+            self.image = pygame.transform.scale(self.image, (20, 20))
         self.rect = self.image.get_rect()
         self.rect.y = random.randrange((HEIGHT/2)-50,(HEIGHT/2)+50)
         self.rect.centerx = -50
