@@ -16,4 +16,6 @@ class Wall(pygame.sprite.Sprite):
         if self.now - self.lastTime > self.deathDelay:
             self.last_shot = self.now
             self.kill()
+    def death(self):
+        self.kill()
      

@@ -4,9 +4,14 @@ from globalVar import *
 from players import *
 from hpBar import *
 from powerup import *
+from start_ui import *
+from exit_ui import *
 class mainState:
     def __init__(self):
+        self.mainMenu = True
+        self.game_run = False
         self.fps = 30
+        self.game_end = False
         self.tittle = "Shmup"
         self.screen = pygame.display.set_mode((WIDTH,HEIGHT))
         self.who_wins = 0
@@ -19,8 +24,6 @@ class mainState:
         self.Shieldhit_snd = pygame.mixer.Sound(os.path.join(GAME_FOLDER, "./assets/shield_hit.wav"))
         self.Bullethit_snd = pygame.mixer.Sound(os.path.join(GAME_FOLDER, "./assets/bullet_hit.wav"))
         pygame.mixer.music.load(os.path.join(GAME_FOLDER, "./assets/game_music.wav"))
-        pygame.mixer.music.set_volume(0.4)
-        pygame.mixer.music.play(loops=-1)
         for snd in ["./assets/Powerup_1.wav", "./assets/Powerup_2.wav", "./assets/Powerup_3.wav", "./assets/Powerup_4.wav", "./assets/Powerup_5.wav"]:
             self.pow_snds.append(pygame.mixer.Sound(os.path.join(GAME_FOLDER, snd)))
         
@@ -118,53 +121,105 @@ player_top = Players(
 PLAYER_TOP.add(player_top)
 hpbarBottom = HpBar(player_bottom, HEIGHT-20)
 hpbarTop = HpBar(player_top, 25)
+start_ui = StartUI()
+exit_ui = ExitUi()
 
 while RUNNING:
-    mainGame.clock.tick(mainGame.fps)
-    mainGame.collide()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            RUNNING = False
-    if player_top.hp <= 0:
-        player_top.kill()
-        mainGame.who_wins = 2
-        player_bottom.invincible = True
-    elif player_bottom.hp <= 0:
-        player_bottom.kill()
-        mainGame.who_wins = 1
-        player_top.invincible = True
-    
-    mainGame.SPAWNPOWERUP(400, 1)
-    mainGame.SPAWNPOWERUP(600, 2)
-    mainGame.SPAWNPOWERUP(700, 3)
-    mainGame.SPAWNPOWERUP(200, 4)
-    mainGame.SPAWNPOWERUP(1000, 5)
-    mainGame.SPAWNPOWERUP(800, 6)
-    ALL_SPRITES.update()
-    mainGame.screen.fill((10,100,130))
-    ALL_SPRITES.draw(mainGame.screen)
-    mainGame.draw_text(mainGame.screen,"Walls: ",14,25,25,True,(255,255,255))
-    mainGame.draw_text(mainGame.screen,str(player_top.walls),14,50,25,True,(0,255,0))
-    mainGame.draw_text(mainGame.screen,"Damage: ",14,100,25,True,(255,255,255))
-    mainGame.draw_text(mainGame.screen,str(player_top.damage),14,140,25,True,(255,165,0))
-    mainGame.draw_text(mainGame.screen,"HP: ",20,180,20,True,(0,150,0))
-    mainGame.draw_text(mainGame.screen,"shoot delay: ",14,WIDTH-100,25,True,(0,150,0))
-    mainGame.draw_text(mainGame.screen,str(player_top.shoot_delay),14,WIDTH-40,25,True,(0,255,255))
+    if mainGame.game_run == True:
+        mainGame.clock.tick(mainGame.fps)
+        mainGame.collide()
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    if mainGame.game_end == True:
+                        mainGame.mainMenu = True
+                        mainGame.game_run = False
+                        mainGame.who_wins = 0
+                        for a in ALL_SPRITES:
+                            a.death()
+                        player_bottom = Players(
+                            WIDTH/2,
+                            HEIGHT - 50,
+                            1,
+                        )
+                        PLAYER_BOTTOM.add(player_bottom)
+                        player_top = Players(
+                            WIDTH/2,
+                            0 + 50,
+                            2,
+                        )
+                        PLAYER_TOP.add(player_top)
+                        hpbarBottom.kill()
+                        hpbarTop.kill()
+                        hpbarBottom = HpBar(player_bottom, HEIGHT-20)
+                        hpbarTop = HpBar(player_top, 25)
+                        pygame.mixer.music.set_volume(0)
+                        mainGame.game_end = False
+            if event.type == pygame.QUIT:
+                RUNNING = False
+        if player_top.hp <= 0:
+            player_top.kill()
+            mainGame.who_wins = 2
+            player_bottom.invincible = True
+            mainGame.game_end = True
+        elif player_bottom.hp <= 0:
+            player_bottom.kill()
+            mainGame.who_wins = 1
+            player_top.invincible = True
+            mainGame.game_end = True
+        
+        mainGame.SPAWNPOWERUP(800, 1)
+        mainGame.SPAWNPOWERUP(1000, 2)
+        mainGame.SPAWNPOWERUP(1100, 3)
+        mainGame.SPAWNPOWERUP(600, 4)
+        mainGame.SPAWNPOWERUP(1400, 5)
+        mainGame.SPAWNPOWERUP(1200, 6)
+        ALL_SPRITES.update()
+        mainGame.screen.fill((10,100,130))
+        ALL_SPRITES.draw(mainGame.screen)
+        mainGame.draw_text(mainGame.screen,"Walls: ",14,25,25,True,(255,255,255))
+        mainGame.draw_text(mainGame.screen,str(player_top.walls),14,50,25,True,(0,255,0))
+        mainGame.draw_text(mainGame.screen,"Damage: ",14,100,25,True,(255,255,255))
+        mainGame.draw_text(mainGame.screen,str(player_top.damage),14,140,25,True,(255,165,0))
+        mainGame.draw_text(mainGame.screen,"HP: ",20,180,20,True,(0,150,0))
+        mainGame.draw_text(mainGame.screen,"shoot delay: ",14,WIDTH-100,25,True,(0,150,0))
+        mainGame.draw_text(mainGame.screen,str(player_top.shoot_delay),14,WIDTH-40,25,True,(0,255,255))
 
 
-    if mainGame.who_wins == 1:
-        mainGame.draw_text(mainGame.screen,"PLAYER TOP WINS",44,WIDTH/2,HEIGHT/2,True,(255,0,0))
-    elif mainGame.who_wins == 2:
-        mainGame.draw_text(mainGame.screen,"PLAYER BOTTOM WINS",44,WIDTH/2,HEIGHT/2,True,(255,0,0))
-    mainGame.draw_text(mainGame.screen,"Walls: ",14,25,HEIGHT-25,True,(255,255,255))
-    mainGame.draw_text(mainGame.screen,str(player_bottom.walls),14,50,HEIGHT-25,True,(0,255,0))
-    mainGame.draw_text(mainGame.screen,"Damage: ",14,100,HEIGHT-25,True,(255,255,255))
-    mainGame.draw_text(mainGame.screen,str(player_bottom.damage),14,140,HEIGHT-25,True,(255,165,0))
-    mainGame.draw_text(mainGame.screen,"HP: ",20,180,HEIGHT-25,True,(0,150,0))
-    mainGame.draw_text(mainGame.screen,"shoot delay: ",14,WIDTH-100,HEIGHT-25,True,(0,150,0))
-    mainGame.draw_text(mainGame.screen,str(player_bottom.shoot_delay),14,WIDTH-40,HEIGHT-25,True,(0,255,255))
+        if mainGame.who_wins == 1:
+            mainGame.draw_text(mainGame.screen,"PLAYER TOP WINS",44,WIDTH/2,HEIGHT/2,True,(255,0,0))
+        elif mainGame.who_wins == 2:
+            mainGame.draw_text(mainGame.screen,"PLAYER BOTTOM WINS",44,WIDTH/2,HEIGHT/2,True,(255,0,0))
+        mainGame.draw_text(mainGame.screen,"Walls: ",14,25,HEIGHT-25,True,(255,255,255))
+        mainGame.draw_text(mainGame.screen,str(player_bottom.walls),14,50,HEIGHT-25,True,(0,255,0))
+        mainGame.draw_text(mainGame.screen,"Damage: ",14,100,HEIGHT-25,True,(255,255,255))
+        mainGame.draw_text(mainGame.screen,str(player_bottom.damage),14,140,HEIGHT-25,True,(255,165,0))
+        mainGame.draw_text(mainGame.screen,"HP: ",20,180,HEIGHT-25,True,(0,150,0))
+        mainGame.draw_text(mainGame.screen,"shoot delay: ",14,WIDTH-100,HEIGHT-25,True,(0,150,0))
+        mainGame.draw_text(mainGame.screen,str(player_bottom.shoot_delay),14,WIDTH-40,HEIGHT-25,True,(0,255,255))
 
-    
-    pygame.display.flip()
-
+        
+        pygame.display.flip()
+    elif mainGame.mainMenu == True: 
+        mainGame.clock.tick(mainGame.fps)
+        for event in pygame.event.get():
+            pos = pygame.mouse.get_pos()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if start_ui.hasStarted(pos) == True:
+                    mainGame.mainMenu = False
+                    mainGame.game_run = True
+                    pygame.mixer.music.set_volume(0.4)
+                    pygame.mixer.music.play(loops=-1)
+                elif exit_ui.hasBeenPressed(pos) == True:
+                    RUNNING = False
+            if event.type == pygame.QUIT:
+                RUNNING = False
+        
+        MENU_SPRITES.update()
+        mainGame.screen.fill((255,114,255))
+        MENU_SPRITES.draw(mainGame.screen)
+        mainGame.draw_text(mainGame.screen,"MULTI SHMUP",34,WIDTH/2+15,28,True,(145,0,145))
+        pygame.display.flip()
+        
 pygame.quit()
+quit()

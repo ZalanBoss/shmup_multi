@@ -17,3 +17,5 @@ class HpBar(pygame.sprite.Sprite):
             self.lastHp = self.player.hp
         elif self.player.hp <= 0:
             self.kill()
+    def death(self):
+        pass

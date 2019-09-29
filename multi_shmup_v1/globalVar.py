@@ -6,6 +6,7 @@ HEIGHT = 420
 FONT_ARIAL = pygame.font.match_font('arial')
 RUNNING = True
 ALL_SPRITES = pygame.sprite.Group()
+MENU_SPRITES = pygame.sprite.Group()
 BULLETS_TOP = pygame.sprite.Group()
 BULLETS_BOTTOM = pygame.sprite.Group()
 PLAYER_BOTTOM = pygame.sprite.Group()

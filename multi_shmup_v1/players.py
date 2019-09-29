@@ -34,7 +34,7 @@ class Players(pygame.sprite.Sprite):
             self.hp = 100
         self.speed = 0
         if self.shoot_delay <= 120:
-            self.shoot_delay = 0 
+            self.shoot_delay = 120 
         if self.hp <= 0:
             self.hp = 0
         if self.hp > 100:
@@ -91,7 +91,7 @@ class Players(pygame.sprite.Sprite):
                 x3 = Bullet(self.rect.x + (self.xSize/2), self.rect.y - (self.ySize+self.ySize), _id)
                 BULLETS_BOTTOM.add(x, x1, x2, x3)
                 self.shoot_snd.play()
-            elif self.now - self.last_shot > self.shoot_delay and self.shoot_stage >= 4:
+            elif self.now - self.last_shot > self.shoot_delay and self.shoot_stage == 4:
                 self.last_shot = self.now
                 x = Bullet(self.rect.x, self.rect.y - (self.ySize / 2), _id)
                 x1 = Bullet(self.rect.x + self.xSize, self.rect.y - (self.ySize / 2), _id)
@@ -99,6 +99,20 @@ class Players(pygame.sprite.Sprite):
                 x3 = Bullet(self.rect.x, self.rect.y - (self.ySize+self.ySize), _id)
                 x4 = Bullet(self.rect.x + self.xSize, self.rect.y - (self.ySize+self.ySize), _id)
                 BULLETS_BOTTOM.add(x, x1, x2, x3, x4)
+                self.shoot_snd.play()
+            elif self.now - self.last_shot > self.shoot_delay and self.shoot_stage > 4:
+                self.last_shot = self.now
+                x = Bullet(self.rect.x + ((self.xSize/2)-5), self.rect.y - (self.ySize / 2), _id)
+                x1 = Bullet(self.rect.x + ((self.xSize/2)+5), self.rect.y - (self.ySize / 2), _id)
+                x2 = Bullet(self.rect.x + ((self.xSize/2)-5), self.rect.y - (self.ySize / 2) - 20, _id)
+                x3 = Bullet(self.rect.x + ((self.xSize/2)+5), self.rect.y - (self.ySize / 2) - 20, _id)
+                x4 = Bullet(self.rect.x - ((self.xSize/2)-5), self.rect.y - (self.ySize / 2) - 20, _id)
+                x5 = Bullet(self.rect.x - ((self.xSize/2)+5), self.rect.y - (self.ySize / 2) - 20, _id)
+                x6 = Bullet(self.rect.x + (self.xSize-5) + (self.xSize/2), self.rect.y - (self.ySize / 2) - 20, _id)
+                x7 = Bullet(self.rect.x + (self.xSize+5) + (self.xSize/2), self.rect.y - (self.ySize / 2) - 20, _id)
+                x8 = Bullet(self.rect.x + ((self.xSize/2)+5), self.rect.y + 2*(self.ySize / 2) - 20, _id)
+                x9 = Bullet(self.rect.x + ((self.xSize/2)-5), self.rect.y + 2*(self.ySize / 2) - 20, _id)
+                BULLETS_BOTTOM.add(x, x1, x2, x3, x4, x5, x6, x7, x8, x9)
                 self.shoot_snd.play()
         else:
             if self.now - self.last_shot > self.shoot_delay and self.shoot_stage == 0:
@@ -127,7 +141,7 @@ class Players(pygame.sprite.Sprite):
                 x3 = Bullet(self.rect.x + (self.xSize/2), self.rect.y + (self.ySize+10), _id)
                 BULLETS_TOP.add(x, x1, x2, x3)
                 self.shoot_snd.play()
-            elif self.now - self.last_shot > self.shoot_delay and self.shoot_stage >= 4:
+            elif self.now - self.last_shot > self.shoot_delay and self.shoot_stage == 4:
                 self.last_shot = self.now
                 x = Bullet(self.rect.x, self.rect.y - (self.ySize / 2), _id)
                 x1 = Bullet(self.rect.x + self.xSize, self.rect.y - (self.ySize / 2), _id)
@@ -135,6 +149,20 @@ class Players(pygame.sprite.Sprite):
                 x3 = Bullet(self.rect.x, self.rect.y + (self.ySize+10), _id)
                 x4 = Bullet(self.rect.x + self.xSize, self.rect.y + (self.ySize+10), _id)
                 BULLETS_TOP.add(x, x1, x2, x3, x4)
+                self.shoot_snd.play()
+            elif self.now - self.last_shot > self.shoot_delay and self.shoot_stage > 4:
+                self.last_shot = self.now
+                x = Bullet(self.rect.x-5, self.rect.y + (self.ySize / 2), _id)
+                x1 = Bullet(self.rect.x+5, self.rect.y + (self.ySize / 2), _id)
+                x2 = Bullet(self.rect.x-5+self.xSize, self.rect.y + (self.ySize / 2), _id)
+                x3 = Bullet(self.rect.x+5+self.xSize, self.rect.y + (self.ySize / 2), _id)
+                x4 = Bullet(self.rect.x-5+(self.xSize/2), self.rect.y + self.ySize+(self.ySize/2), _id)
+                x5 = Bullet(self.rect.x+5+(self.xSize/2), self.rect.y + self.ySize+(self.ySize/2), _id)
+                x6 = Bullet(self.rect.x-5+self.xSize, self.rect.y + self.ySize+(self.ySize + self.ySize/2), _id)
+                x7 = Bullet(self.rect.x+5+self.xSize, self.rect.y + self.ySize+(self.ySize + self.ySize/2), _id)
+                x8 = Bullet(self.rect.x-5, self.rect.y + self.ySize+(self.ySize + self.ySize/2), _id)
+                x9 = Bullet(self.rect.x+5, self.rect.y + self.ySize+(self.ySize + self.ySize/2), _id)
+                BULLETS_TOP.add(x, x1, x2, x3, x4, x5, x6, x7, x8, x9)
                 self.shoot_snd.play()
     def placeWall(self, _id):
         self.now2 = pygame.time.get_ticks()
@@ -156,4 +184,5 @@ class Players(pygame.sprite.Sprite):
         #    self.last_pow = self.now3
         #    self.shoot_stage -= 1
         #    print("shot____s", self.shoot_stage)
-        
+    def death(self):
+        self.kill()

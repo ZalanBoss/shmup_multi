@@ -24,3 +24,5 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.y -= self.velocity * self.id
         if self.rect.y < 0 or self.rect.y > HEIGHT:
             self.kill()
+    def death(self):
+        self.kill()
