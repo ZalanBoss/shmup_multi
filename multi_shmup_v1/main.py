@@ -4,11 +4,11 @@ from globalVar import *
 from players import *
 from hpBar import *
 from powerup import *
-from start_ui import *
-from exit_ui import *
+from ui import *
 class mainState:
     def __init__(self):
         self.mainMenu = True
+        self.controls_ = False
         self.game_run = False
         self.fps = 30
         self.game_end = False
@@ -121,14 +121,46 @@ player_top = Players(
 PLAYER_TOP.add(player_top)
 hpbarBottom = HpBar(player_bottom, HEIGHT-20)
 hpbarTop = HpBar(player_top, 25)
-start_ui = StartUI()
-exit_ui = ExitUi()
-
+start_ui = Button(pygame.image.load(os.path.join(GAME_FOLDER, "./assets/start.png")), 200, 100, WIDTH/2, HEIGHT/2)
+exit_ui = Button(pygame.image.load(os.path.join(GAME_FOLDER, "./assets/exit.png")), 200, 100,
+                                     WIDTH/2, HEIGHT/2 + 200/2)
+menu_ui = Button(pygame.image.load(os.path.join(GAME_FOLDER, "./assets/menu.png")), 20, 20,
+                                     WIDTH+20, 40, group=ALL_SPRITES)
+menu_ui_cont = Button(pygame.image.load(os.path.join(GAME_FOLDER, "./assets/menu.png")), 20, 20,
+                                     WIDTH+20, 40, group=CONTROLS_MENU_SPRITES)
+controlls_ui = Button(pygame.image.load(os.path.join(GAME_FOLDER, "./assets/controls.png")), 80, 80,
+                                     WIDTH-40, 70)
 while RUNNING:
     if mainGame.game_run == True:
         mainGame.clock.tick(mainGame.fps)
         mainGame.collide()
         for event in pygame.event.get():
+            pos = pygame.mouse.get_pos()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if menu_ui.isPressed(pos) == True:
+                        mainGame.mainMenu = True
+                        mainGame.game_run = False
+                        mainGame.who_wins = 0
+                        for a in ALL_SPRITES:
+                            a.death()
+                        player_bottom = Players(
+                            WIDTH/2,
+                            HEIGHT - 50,
+                            1,
+                        )
+                        PLAYER_BOTTOM.add(player_bottom)
+                        player_top = Players(
+                            WIDTH/2,
+                            0 + 50,
+                            2,
+                        )
+                        PLAYER_TOP.add(player_top)
+                        hpbarBottom.kill()
+                        hpbarTop.kill()
+                        hpbarBottom = HpBar(player_bottom, HEIGHT-20)
+                        hpbarTop = HpBar(player_top, 25)
+                        pygame.mixer.music.set_volume(0)
+                        mainGame.game_end = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     if mainGame.game_end == True:
@@ -177,27 +209,25 @@ while RUNNING:
         ALL_SPRITES.update()
         mainGame.screen.fill((10,100,130))
         ALL_SPRITES.draw(mainGame.screen)
-        mainGame.draw_text(mainGame.screen,"Walls: ",14,25,25,True,(255,255,255))
-        mainGame.draw_text(mainGame.screen,str(player_top.walls),14,50,25,True,(0,255,0))
-        mainGame.draw_text(mainGame.screen,"Damage: ",14,100,25,True,(255,255,255))
-        mainGame.draw_text(mainGame.screen,str(player_top.damage),14,140,25,True,(255,165,0))
-        mainGame.draw_text(mainGame.screen,"HP: ",20,180,20,True,(0,150,0))
-        mainGame.draw_text(mainGame.screen,"shoot delay: ",14,WIDTH-100,25,True,(0,150,0))
-        mainGame.draw_text(mainGame.screen,str(player_top.shoot_delay),14,WIDTH-40,25,True,(0,255,255))
-
+        Text(mainGame.screen,"Walls: ",25,25,(255,255,255)).draw()
+        Text(mainGame.screen,str(player_top.walls),50,25,(0,255,0)).draw()
+        Text(mainGame.screen,"Damage: ",100,25,(255,255,255)).draw()
+        Text(mainGame.screen,str(player_top.damage),140,25,(255,165,0)).draw()
+        Text(mainGame.screen,"HP: ",180,20,(0,150,0),size=20).draw()
+        Text(mainGame.screen,"shoot delay: ",WIDTH-100,25,(0,150,0)).draw()
+        Text(mainGame.screen,str(player_top.shoot_delay),WIDTH-40,25,(0,255,255)).draw()
 
         if mainGame.who_wins == 1:
-            mainGame.draw_text(mainGame.screen,"PLAYER TOP WINS",44,WIDTH/2,HEIGHT/2,True,(255,0,0))
+            Text(mainGame.screen,"PLAYER TOP WINS",WIDTH/2,HEIGHT/2,(255,0,0), size=44).draw()
         elif mainGame.who_wins == 2:
-            mainGame.draw_text(mainGame.screen,"PLAYER BOTTOM WINS",44,WIDTH/2,HEIGHT/2,True,(255,0,0))
-        mainGame.draw_text(mainGame.screen,"Walls: ",14,25,HEIGHT-25,True,(255,255,255))
-        mainGame.draw_text(mainGame.screen,str(player_bottom.walls),14,50,HEIGHT-25,True,(0,255,0))
-        mainGame.draw_text(mainGame.screen,"Damage: ",14,100,HEIGHT-25,True,(255,255,255))
-        mainGame.draw_text(mainGame.screen,str(player_bottom.damage),14,140,HEIGHT-25,True,(255,165,0))
-        mainGame.draw_text(mainGame.screen,"HP: ",20,180,HEIGHT-25,True,(0,150,0))
-        mainGame.draw_text(mainGame.screen,"shoot delay: ",14,WIDTH-100,HEIGHT-25,True,(0,150,0))
-        mainGame.draw_text(mainGame.screen,str(player_bottom.shoot_delay),14,WIDTH-40,HEIGHT-25,True,(0,255,255))
-
+            Text(mainGame.screen,"PLAYER BOTTOM WINS",WIDTH/2,HEIGHT/2,(255,0,0), size=44).draw()
+        Text(mainGame.screen,"Walls: ",25,HEIGHT-25,(255,255,255)).draw()
+        Text(mainGame.screen,str(player_bottom.walls),50,HEIGHT-25,(0,255,0)).draw()
+        Text(mainGame.screen,"Damage: ",100,HEIGHT-25,(255,255,255)).draw()
+        Text(mainGame.screen,str(player_bottom.damage),140,HEIGHT-25,(255,165,0)).draw()
+        Text(mainGame.screen,"HP: ",180,HEIGHT-25,(0,150,0),size = 20).draw()
+        Text(mainGame.screen,"shoot delay: ",WIDTH-100,HEIGHT-25,(0,150,0)).draw()
+        Text(mainGame.screen,str(player_bottom.shoot_delay),WIDTH-40,HEIGHT-25,(0,255,255)).draw()
         
         pygame.display.flip()
     elif mainGame.mainMenu == True: 
@@ -205,21 +235,51 @@ while RUNNING:
         for event in pygame.event.get():
             pos = pygame.mouse.get_pos()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if start_ui.hasStarted(pos) == True:
+                if start_ui.isPressed(pos) == True:
                     mainGame.mainMenu = False
                     mainGame.game_run = True
                     pygame.mixer.music.set_volume(0.4)
                     pygame.mixer.music.play(loops=-1)
-                elif exit_ui.hasBeenPressed(pos) == True:
+                elif exit_ui.isPressed(pos) == True:
                     RUNNING = False
+                elif controlls_ui.isPressed(pos): 
+                    mainGame.mainMenu = False
+                    mainGame.game_run = False
+                    mainGame.controls_ = True
             if event.type == pygame.QUIT:
                 RUNNING = False
         
         MENU_SPRITES.update()
         mainGame.screen.fill((255,114,255))
         MENU_SPRITES.draw(mainGame.screen)
-        mainGame.draw_text(mainGame.screen,"MULTI SHMUP",34,WIDTH/2+15,28,True,(145,0,145))
+
+        Text(mainGame.screen, "MULTI SHMUP", WIDTH/2, 20, (25,144,234), size=50).draw()
         pygame.display.flip()
+    elif mainGame.controls_:
+        mainGame.clock.tick(mainGame.fps)
+        for event in pygame.event.get():
+            pos = pygame.mouse.get_pos()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if menu_ui_cont.isPressed(pos) == True:
+                    mainGame.controls_ = False
+                    mainGame.mainMenu = True
+            if event.type == pygame.QUIT:
+                RUNNING = False
+        CONTROLS_MENU_SPRITES.update()
+        mainGame.screen.fill((114,114,114))
+        CONTROLS_MENU_SPRITES.draw(mainGame.screen)
+        Text(mainGame.screen, "MULTI SHMUP", WIDTH/2, 20, (25,144,234), size=50).draw()
+        Text(mainGame.screen, "TOP PLAYER MOVE LEFT : L_ARROW", 140, 80, (25,144,234)).draw()
+        Text(mainGame.screen, "TOP PLAYER MOVE RIGHT : R_ARROW", 145, 100, (25,144,234)).draw()
+        Text(mainGame.screen, "TOP PLAYER SHOOT : DOWN_ARROW", 143, 120, (225,144,234)).draw()
+        Text(mainGame.screen, "TOP PLAYER PLACE SHIELD : UP_ARROW", 155, 140, (25,144,234)).draw()
+
+        Text(mainGame.screen, "BOTTOM PLAYER MOVE LEFT : a", 130, 180, (25,144,234)).draw()
+        Text(mainGame.screen, "BOTTOM PLAYER MOVE RIGHT : d", 133, 200, (25,144,234)).draw()
+        Text(mainGame.screen, "BOTTOM PLAYER SHOOT : w", 115, 220, (225,144,234)).draw() 
+        Text(mainGame.screen, "BOTTOM PLAYER PLACE SHIELD : ws", 143, 240, (25,144,234)).draw()
+        pygame.display.flip()
+        
         
 pygame.quit()
 quit()
